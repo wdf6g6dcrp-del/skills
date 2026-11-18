@@ -1,0 +1,21 @@
+<div class="page-main">
+  <h1>Cart</h1>
+  {%- if cart.item_count == 0 -%}
+    <p>{{ 'general.cart_empty' | t }}</p>
+    <p><a href="{{ routes.all_products_collection_url }}">{{ 'general.continue' | t }}</a></p>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post">
+      {%- for item in cart.items -%}
+        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
+          {%- if item.image -%}{{ item.image | image_url: width: 120 | image_tag }}{%- endif -%}
+          <div style="flex:1"><a href="{{ item.url }}">{{ item.product.title }}</a><br>{{ item.final_price | money }}</div>
+          <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" style="width:80px">
+        </div>
+      {%- endfor -%}
+      <p style="margin:1.5rem 0;font-size:1.3rem;">Total: {{ cart.total_price | money }}</p>
+      <button type="submit" name="update" class="btn">Update</button>
+      <button type="submit" name="checkout" class="btn">{{ 'general.checkout' | t }}</button>
+    </form>
+  {%- endif -%}
+</div>
+{% schema %}{ "name": "Cart" }{% endschema %}

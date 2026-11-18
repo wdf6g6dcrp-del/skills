@@ -1,0 +1,30 @@
+{
+  "sections": {
+    "hero": {
+      "type": "soda-hero",
+      "blocks": {
+        "classic": {
+          "type": "flavor",
+          "settings": {}
+        },
+        "lime": {
+          "type": "flavor",
+          "settings": {
+            "name": "Zero Lime",
+            "price": "$2.99",
+            "image_url": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/Blue%20Soda.png",
+            "brightness": 0.7,
+            "texture_url": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/blue%20base%20color.jpg",
+            "berry_url": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/blueberry.glb",
+            "bg_inner": "#0b4f8a",
+            "bg_mid": "#04294e",
+            "bg_outer": "#010c14"
+          }
+        }
+      },
+      "block_order": ["classic", "lime"],
+      "settings": {}
+    }
+  },
+  "order": ["hero"]
+}
