@@ -1,0 +1,11 @@
+{
+  "general": {
+    "add_to_cart": "Add to cart",
+    "sold_out": "Sold out",
+    "cart_empty": "Your cart is empty",
+    "checkout": "Check out",
+    "not_found": "Page not found",
+    "continue": "Continue shopping",
+    "search": "Search"
+  }
+}

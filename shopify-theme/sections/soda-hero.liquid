@@ -1,0 +1,203 @@
+{%- liquid
+  assign first = section.blocks.first
+  assign fg_orbits = '45deg 120deg 105%|-120deg 45deg 105%|200deg 90deg 105%|10deg 20deg 105%|-45deg 160deg 105%|80deg 75deg 105%' | split: '|'
+  assign bg_orbits = '-20deg 110deg 105%|160deg 45deg 105%|45deg 20deg 105%' | split: '|'
+  assign leaf_orbits = '45deg 75deg 105%|-30deg 60deg 105%|120deg 85deg 105%|10deg 45deg 105%' | split: '|'
+  assign berry_src = first.settings.berry_url | default: 'https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/cherry.glb'
+-%}
+
+{%- if first -%}
+<style>
+  body.template-index {
+    --bg-inner: {{ first.settings.bg_inner }};
+    --bg-mid: {{ first.settings.bg_mid }};
+    --bg-outer: {{ first.settings.bg_outer }};
+  }
+</style>
+{%- endif -%}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+<main class="hero" id="soda-hero" data-bubble="{{ section.settings.bubble_url }}" {{ section.shopify_attributes }}>
+  <script type="application/json" id="soda-config">
+    {
+      "flavors": [
+        {%- for block in section.blocks -%}
+        {
+          "inner": "{{ block.settings.bg_inner }}",
+          "mid": "{{ block.settings.bg_mid }}",
+          "outer": "{{ block.settings.bg_outer }}",
+          "texture": {{ block.settings.texture_url | json }},
+          "berry": {{ block.settings.berry_url | json }}
+        }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+
+  <div class="hero-content">
+
+    <div class="leaves-container">
+      {%- for orbit in leaf_orbits -%}
+        <model-viewer class="leaf l{{ forloop.index }}" src="{{ section.settings.leaves_url }}" environment-image="neutral" exposure="1.0" interaction-prompt="none" camera-orbit="{{ orbit }}"></model-viewer>
+      {%- endfor -%}
+    </div>
+
+    <div class="hero-left">
+      <h1 class="main-title large-animation-1">
+        <span class="outline">{{ section.settings.title_line_1 }}</span><br>
+        {{ section.settings.title_line_2 }}
+      </h1>
+      <p class="description">{{ section.settings.description | newline_to_br }}</p>
+      <div class="cta-group">
+        <a class="primary-btn" href="{{ section.settings.button_url | default: routes.all_products_collection_url }}" style="text-decoration:none;">
+          {{ section.settings.button_label }}
+          <span class="plus-icon">+</span>
+        </a>
+      </div>
+      <div class="award-badge">
+        <div class="award-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15L15 18L19 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="award-text">
+          <span class="award-title">{{ section.settings.award_title }}</span>
+          <span class="award-subtitle">{{ section.settings.award_subtitle }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="berries-container-bg">
+      {%- for orbit in bg_orbits -%}
+        {%- assign n = forloop.index | plus: 6 -%}
+        <model-viewer class="berry b{{ n }}" src="{{ berry_src }}" environment-image="neutral" exposure="1.0" interaction-prompt="none" camera-orbit="{{ orbit }}"></model-viewer>
+      {%- endfor -%}
+    </div>
+
+    <div class="hero-center">
+      <model-viewer id="product-model" src="{{ section.settings.can_model_url }}" alt="{{ section.settings.title_line_1 }} {{ section.settings.title_line_2 }} 3D model" camera-controls
+        disable-zoom shadow-intensity="0" environment-image="neutral" exposure="1.5"
+        interaction-prompt="none" camera-orbit="0deg 90deg 380%" field-of-view="30deg"
+        class="main-product-3d">
+      </model-viewer>
+    </div>
+
+    <div class="berries-container">
+      {%- for orbit in fg_orbits -%}
+        <model-viewer class="berry b{{ forloop.index }}" src="{{ berry_src }}" environment-image="neutral" exposure="1.2" interaction-prompt="none" camera-orbit="{{ orbit }}"></model-viewer>
+      {%- endfor -%}
+    </div>
+
+    <div class="hero-right">
+      <div class="product-carousel">
+        <div class="carousel-cards">
+          {%- for block in section.blocks -%}
+            <div class="card{% if forloop.first %} active{% endif %}" data-flavor-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                <img src="{{ block.settings.image | image_url: width: 400 }}" alt="{{ block.settings.name | escape }}" style="filter: brightness({{ block.settings.brightness }});">
+              {%- else -%}
+                <img src="{{ block.settings.image_url }}" alt="{{ block.settings.name | escape }}" style="filter: brightness({{ block.settings.brightness }});">
+              {%- endif -%}
+              <div class="card-info">
+                <span>{{ block.settings.name }}</span>
+                <span>{{ block.settings.price }}</span>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+        <div class="carousel-nav">
+          <button class="nav-arrow" data-dir="-1" aria-label="Previous flavor">←</button>
+          <button class="nav-arrow" data-dir="1" aria-label="Next flavor">→</button>
+        </div>
+      </div>
+      <h2 class="side-title large-animation-1">
+        <span class="outline">{{ section.settings.side_line_1 }}</span><br>
+        {{ section.settings.side_line_2 }}
+      </h2>
+    </div>
+
+  </div>
+</main>
+
+<svg style="position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;">
+  <filter id="frosted">
+    <feTurbulence type="fractalNoise" baseFrequency="0.0125" numOctaves="3" result="noise" />
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="80" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div style="display: none;">
+  {%- assign preloaded = '' -%}
+  {%- for block in section.blocks -%}
+    {%- unless preloaded contains block.settings.berry_url -%}
+      <model-viewer src="{{ block.settings.berry_url }}"></model-viewer>
+      {%- assign preloaded = preloaded | append: block.settings.berry_url -%}
+    {%- endunless -%}
+  {%- endfor -%}
+</div>
+
+<script src="{{ 'soda.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Soda hero",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "header", "content": "Text" },
+    { "type": "text", "id": "title_line_1", "label": "Headline line 1", "default": "Pure" },
+    { "type": "text", "id": "title_line_2", "label": "Headline line 2", "default": "Zero" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "Unleash the crisp taste of zero sugar.\nRefreshment redefined in every bubble —\nall in one sleek design." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop Now" },
+    { "type": "url", "id": "button_url", "label": "Button link" },
+    { "type": "text", "id": "award_title", "label": "Award title", "default": "DESIGN AWARDS" },
+    { "type": "text", "id": "award_subtitle", "label": "Award subtitle", "default": "PREMIUM BEVERAGE 2025" },
+    { "type": "text", "id": "side_line_1", "label": "Side headline line 1", "default": "Refreshingly" },
+    { "type": "text", "id": "side_line_2", "label": "Side headline line 2", "default": "Clean" },
+    { "type": "header", "content": "3D assets (URLs)" },
+    { "type": "text", "id": "can_model_url", "label": "Can model (.glb)", "default": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/deit_soda2.glb" },
+    { "type": "text", "id": "leaves_url", "label": "Leaves model (.glb)", "default": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/leaves.glb" },
+    { "type": "text", "id": "bubble_url", "label": "Bubble image (.png)", "default": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/bubble.png" }
+  ],
+  "blocks": [
+    {
+      "type": "flavor",
+      "name": "Flavor",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Name", "default": "Diet Classic" },
+        { "type": "text", "id": "price", "label": "Price label", "default": "$2.99" },
+        { "type": "image_picker", "id": "image", "label": "Card image (overrides URL)" },
+        { "type": "text", "id": "image_url", "label": "Card image URL", "default": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/Green%20Soda.png" },
+        { "type": "range", "id": "brightness", "label": "Card image brightness", "min": 0.3, "max": 1.2, "step": 0.05, "default": 1 },
+        { "type": "text", "id": "texture_url", "label": "Can base-color texture URL", "default": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/green%20base%20color.jpg" },
+        { "type": "text", "id": "berry_url", "label": "Floating fruit model (.glb)", "default": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/cherry.glb" },
+        { "type": "color", "id": "bg_inner", "label": "Background inner", "default": "#0b8a78" },
+        { "type": "color", "id": "bg_mid", "label": "Background middle", "default": "#044e3b" },
+        { "type": "color", "id": "bg_outer", "label": "Background outer", "default": "#011411" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Soda hero",
+      "blocks": [
+        { "type": "flavor" },
+        {
+          "type": "flavor",
+          "settings": {
+            "name": "Zero Lime",
+            "image_url": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/Blue%20Soda.png",
+            "brightness": 0.7,
+            "texture_url": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/blue%20base%20color.jpg",
+            "berry_url": "https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/blueberry.glb",
+            "bg_inner": "#0b4f8a",
+            "bg_mid": "#04294e",
+            "bg_outer": "#010c14"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

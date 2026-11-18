@@ -1,0 +1,17 @@
+<div class="page-main">
+  <h1>{{ 'general.search' | t }}</h1>
+  <form action="{{ routes.search_url }}" method="get" style="margin-bottom:2rem;">
+    <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search' | t }}">
+  </form>
+  <div class="grid">
+    {%- paginate search.results by 12 -%}
+      {%- for item in search.results -%}
+        <a class="item" href="{{ item.url }}">
+          {%- if item.featured_image -%}{{ item.featured_image | image_url: width: 400 | image_tag: loading: 'lazy' }}{%- endif -%}
+          <p>{{ item.title }}</p>
+        </a>
+      {%- endfor -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+{% schema %}{ "name": "Search" }{% endschema %}

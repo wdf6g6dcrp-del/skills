@@ -1,0 +1,16 @@
+<div class="page-main">
+  <h1>{{ collection.title }}</h1>
+  <div class="grid">
+    {%- paginate collection.products by 12 -%}
+      {%- for product in collection.products -%}
+        <a class="item" href="{{ product.url }}">
+          {%- if product.featured_image -%}{{ product.featured_image | image_url: width: 500 | image_tag: loading: 'lazy' }}{%- endif -%}
+          <p>{{ product.title }}</p>
+          <p>{{ product.price | money }}</p>
+        </a>
+      {%- endfor -%}
+      {%- if paginate.pages > 1 -%}<div style="grid-column:1/-1">{{ paginate | default_pagination }}</div>{%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+{% schema %}{ "name": "Collection" }{% endschema %}
